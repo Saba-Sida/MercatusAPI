@@ -9,5 +9,5 @@ public class OperationResponse
 
 public class OperationResponse<T>: OperationResponse
 {
-    public T? Data { get; set; } = default;
+    public T? Data { get; set; }
 }
