@@ -2,9 +2,9 @@
 
 public class OperationResponse
 {
-    public bool IsSuccess { get; set; }
+    public bool IsSuccess { get; set; } = true;
     public string ErrorMessage { get; set; } = string.Empty;
-    public OperationResponseStatus Status { get; set; }
+    public OperationResponseStatus Status { get; set; } = OperationResponseStatus.Success;
 }
 
 public class OperationResponse<T>: OperationResponse
