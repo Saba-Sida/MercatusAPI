@@ -5,6 +5,7 @@ using Application.Models.RequestModels;
 using Application.Repositories.Users;
 using Application.Security;
 using Application.Services;
+using Application.Services.Auth;
 using Application.Services.Users;
 using Application.Validation;
 using Domain.Entities;
@@ -20,6 +21,7 @@ public class UserService : IUserService
     private readonly IEmailSender _emailSender;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUsersRepository _usersRepository;
+    private readonly IJwtService _jwtService;
 
     private const int SignUpRequestTimeSpanInCacheStorageInMinutes = 5;
 
@@ -27,13 +29,15 @@ public class UserService : IUserService
         ICacheService cacheService,
         IEmailSender emailSender,
         IPasswordHasher passwordHasher,
-        IUsersRepository usersRepository)
+        IUsersRepository usersRepository,
+        IJwtService jwtService)
     {
         _userAuthValidator = userAuthValidator;
         _cacheService = cacheService;
         _emailSender = emailSender;
         _passwordHasher = passwordHasher;
         _usersRepository = usersRepository;
+        _jwtService = jwtService;
     }
 
     public async Task<OperationResponse<string>> SendSignUpRequest(SignUpRequest request)
@@ -46,7 +50,7 @@ public class UserService : IUserService
         {
             var useSignUpModel = ConvertSignUpRequestToSignUpReadyUserModel(request);
             await StoreUserSignUpModelInCache(useSignUpModel);
-            
+
             string otp = GenerateOtp();
             await StoreOtpInCache(request.Email, otp);
             await SendOtpToEmail(request.Email, request.FirstName, otp);
@@ -100,18 +104,42 @@ public class UserService : IUserService
 
         return otpValidationResponse;
     }
-    
+
+    /// <returns>JWT Token for user authentication/authorization</returns>
+    public async Task<OperationResponse<string>> LogIn(LogInRequest request)
+    {
+        var jwtResponse = new OperationResponse<string>();
+
+        var isCorrectUserLogInModel = await _userAuthValidator.VerifyLogInRequest(request);
+
+        if (!isCorrectUserLogInModel.IsValid)
+            jwtResponse.MakeGenerallyFailedResponse(isCorrectUserLogInModel.ErrorMessage);
+        else
+        {
+            var user = await _usersRepository.GetUserByEmail(request.Email);
+
+            if (user == null) jwtResponse.MakeGenerallyFailedResponse("User not found");
+            else
+            {
+                string userJwt = _jwtService.GenerateToken(user);
+                jwtResponse.Data = userJwt;
+            }
+        }
+
+        return jwtResponse;
+    }
+
     private async Task<UserSignUpModel?> GetSignUpModelFromCache(string email)
     {
         return await _cacheService.GetValueByKey<UserSignUpModel>(BuildMemoryCacheKeyForSignUp(email));
     }
-    
+
     private async Task<string?> GetOtpFromCache(string email)
     {
         var signUpOtpCacheKey = BuildMemoryCacheKeyForSignUpOtp(email);
         return await _cacheService.GetValueByKey<string>(signUpOtpCacheKey);
     }
-    
+
     private async Task StoreUserSignUpModelInCache(UserSignUpModel model)
     {
         var signUpCacheKey = BuildMemoryCacheKeyForSignUp(model.Email);
@@ -158,7 +186,7 @@ public class UserService : IUserService
             Role = model.Role
         };
     }
-    
+
     private static string GenerateOtp()
     {
         return new Random().Next(10000, 100000).ToString("D5");
