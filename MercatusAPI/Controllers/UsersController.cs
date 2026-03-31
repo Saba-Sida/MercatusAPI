@@ -35,4 +35,14 @@ public class UsersController: ControllerBase
 
         return this.FormatResponse(response);
     }
+
+    /// <returns>If successful: JWT token for user</returns>
+    [HttpPost]
+    [Route("log-in")]
+    public async Task<IActionResult> LogIn([FromBody] LogInRequest request)
+    {
+        OperationResponse<string> response = await _userService.LogIn(request);
+
+        return this.FormatResponse(response);
+    }
 }

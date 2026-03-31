@@ -1,4 +1,5 @@
-﻿using Application.Repositories.Users;
+﻿using Application.Models.DTOs;
+using Application.Repositories.Users;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -23,5 +24,19 @@ public class UsersRepository: IUsersRepository
     {
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
+    }
+    
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        return await _dbContext.Users.FirstOrDefaultAsync(user => user.Email == email);
+    }
+
+    public async Task<string?> GetUserPasswordHashByEmail(string email)
+    {
+        return await _dbContext.Users
+            .AsNoTracking()
+            .Where(user => user.Email == email)
+            .Select(user => user.PasswordHash)
+            .FirstOrDefaultAsync();
     }
 }
