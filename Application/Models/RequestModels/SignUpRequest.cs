@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MercatusAPI.Models.RequestModels;
+namespace Application.Models.RequestModels;
 
 public record SignUpRequest(
     [Required] string FirstName,
     [Required] string LastName,
     [Required, EmailAddress] string Email,
     [Required, MinLength(6)] string Password,
-    [Required, MinLength(6)] string PasswordConfirm,
-    [Required] string Role
+    [Required, MinLength(6)] string PasswordConfirm
     );

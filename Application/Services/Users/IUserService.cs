@@ -1,6 +1,5 @@
 ﻿using Application.Models.Common;
 using Application.Models.RequestModels;
-using MercatusAPI.Models.RequestModels;
 
 namespace Application.Services.Users;
 
