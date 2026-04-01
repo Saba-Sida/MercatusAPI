@@ -2,7 +2,6 @@
 using Application.Models.RequestModels;
 using Application.Services.Users;
 using MercatusAPI.ExternalMethods;
-using MercatusAPI.Models.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MercatusAPI.Controllers;

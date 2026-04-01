@@ -3,7 +3,6 @@ using Application.Models.RequestModels;
 using Application.Repositories.Users;
 using Application.Security;
 using Application.Validation;
-using MercatusAPI.Models.RequestModels;
 
 namespace Infrastructure.Validation;
 

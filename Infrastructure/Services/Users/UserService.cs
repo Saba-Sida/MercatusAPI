@@ -10,7 +10,6 @@ using Application.Services.Users;
 using Application.Validation;
 using Domain.Entities;
 using Domain.Enums;
-using MercatusAPI.Models.RequestModels;
 
 namespace Infrastructure.Services.Users;
 
@@ -169,8 +168,7 @@ public class UserService : IUserService
             request.FirstName,
             request.LastName,
             request.Email,
-            _passwordHasher.HashPassword(request.Password),
-            GetRoleEnum(request.Role)
+            _passwordHasher.HashPassword(request.Password)
         );
     }
 
@@ -183,23 +181,13 @@ public class UserService : IUserService
             Created = DateTime.Now,
             Email = model.Email,
             PasswordHash = model.PasswordHash,
-            Role = model.Role
+            Role = RolesEnum.User
         };
     }
 
     private static string GenerateOtp()
     {
         return new Random().Next(10000, 100000).ToString("D5");
-    }
-
-    private static RolesEnum GetRoleEnum(string roleString)
-    {
-        return
-            roleString.ToLower() switch
-            {
-                "admin" => RolesEnum.Admin,
-                _ => RolesEnum.User
-            };
     }
 
     private static string BuildMemoryCacheKeyForSignUp(string email)

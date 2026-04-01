@@ -1,6 +1,5 @@
 ﻿using Application.Models.DTOs;
 using Application.Models.RequestModels;
-using MercatusAPI.Models.RequestModels;
 
 namespace Application.Validation;
 
