@@ -1,16 +1,20 @@
 using System.Text;
 using Application.Models.Auth;
+using Application.Repositories.Categories;
 using Application.Repositories.Users;
 using Application.Security;
 using Application.Services;
 using Application.Services.Auth;
+using Application.Services.Categories;
 using Application.Services.Users;
 using Application.Validation;
 using Infrastructure.Data;
+using Infrastructure.Repositories.Categories;
 using Infrastructure.Repositories.Users;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.Auth;
+using Infrastructure.Services.Categories;
 using Infrastructure.Services.Users;
 using Infrastructure.Validation;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +35,8 @@ builder.Services.AddScoped<ICacheService, InMemoryCacheService>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUserAuthValidator, UserAuthValidator>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("Jwt"));
