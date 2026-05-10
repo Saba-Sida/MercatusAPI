@@ -20,4 +20,6 @@ public class Product
     public int BrandId { get; set; }
     [ForeignKey("BrandId")]
     public Brand? Brand { get; set; }
+
+    public List<ProductPhoto> ProductPhotos { get; set; } = new();
 }
