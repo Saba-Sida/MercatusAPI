@@ -10,4 +10,11 @@ public static class OperationResponseExtensionMethods
         operationResponse.IsSuccess = false;
         operationResponse.Status = OperationResponseStatus.ValidationError;
     }
+    
+    public static void MakeConflictResponse<T>(this T operationResponse, string errorMessage) where T : OperationResponse
+    {
+        operationResponse.ErrorMessage = errorMessage;
+        operationResponse.IsSuccess = false;
+        operationResponse.Status = OperationResponseStatus.Conflict;
+    }
 }
