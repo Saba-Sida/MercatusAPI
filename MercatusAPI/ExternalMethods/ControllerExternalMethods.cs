@@ -14,14 +14,9 @@ public static class ControllerExternalMethods
     public static IActionResult FormatResponse(this ControllerBase controllerBase,
         OperationResponse operationResponse)
     {
-        if (operationResponse.IsSuccess)
-        {
-            return controllerBase.StatusCode((int)operationResponse.Status);
-        }
-
-        return controllerBase.StatusCode((int)operationResponse.Status, operationResponse.ErrorMessage);
+        return controllerBase.StatusCode((int)operationResponse.Status, operationResponse);
     }
-    
+
     /// <summary>
     /// Returns api ready response type from OperationResponse Wrapper
     /// </summary>
@@ -32,11 +27,6 @@ public static class ControllerExternalMethods
     public static IActionResult FormatResponse<T>(this ControllerBase controllerBase,
         OperationResponse<T> operationResponse)
     {
-        if (operationResponse.IsSuccess)
-        {
-            return controllerBase.StatusCode((int)operationResponse.Status, operationResponse.Data);
-        }
-
-        return controllerBase.StatusCode((int)operationResponse.Status, operationResponse.ErrorMessage);
+        return controllerBase.StatusCode((int)operationResponse.Status, operationResponse);
     }
 }
