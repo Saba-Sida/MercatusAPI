@@ -3,24 +3,30 @@ using Application.BlobStorage;
 using Application.Models.Auth;
 using Application.Repositories.Brands;
 using Application.Repositories.Categories;
+using Application.Repositories.ProductPhotos;
+using Application.Repositories.Products;
 using Application.Repositories.Users;
 using Application.Security;
 using Application.Services;
 using Application.Services.Auth;
 using Application.Services.Brands;
 using Application.Services.Categories;
+using Application.Services.Products;
 using Application.Services.Users;
 using Application.Validation;
 using Infrastructure.BlobStirage;
 using Infrastructure.Data;
 using Infrastructure.Repositories.Brands;
 using Infrastructure.Repositories.Categories;
+using Infrastructure.Repositories.ProductPhotos;
+using Infrastructure.Repositories.Products;
 using Infrastructure.Repositories.Users;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.Auth;
 using Infrastructure.Services.Brands;
 using Infrastructure.Services.Categories;
+using Infrastructure.Services.Products;
 using Infrastructure.Services.Users;
 using Infrastructure.Validation;
 using MercatusAPI.LayerSpecificHelpers;
@@ -42,6 +48,7 @@ builder.Services.AddScoped<ICacheService, InMemoryCacheService>();
 builder.Services.AddScoped<PhotoConvertingHelper>();
 builder.Services.AddScoped<IGenericBlobStorageManager, GenericBlobStorageManager>();
 builder.Services.AddScoped<IBrandPhotoStorageHelper, BrandPhotoStorageHelper>();
+builder.Services.AddScoped<IProductPhotoStorageHelper, ProductPhotoStorageHelper>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUserAuthValidator, UserAuthValidator>();
@@ -50,6 +57,9 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IProductPhotoRepository, ProductPhotoRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
