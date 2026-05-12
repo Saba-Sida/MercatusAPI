@@ -1,24 +1,32 @@
 using System.Text;
+using Application.BlobStorage;
 using Application.Models.Auth;
+using Application.Repositories.Brands;
 using Application.Repositories.Categories;
 using Application.Repositories.Users;
 using Application.Security;
 using Application.Services;
 using Application.Services.Auth;
+using Application.Services.Brands;
 using Application.Services.Categories;
 using Application.Services.Users;
 using Application.Validation;
+using Infrastructure.BlobStirage;
 using Infrastructure.Data;
+using Infrastructure.Repositories.Brands;
 using Infrastructure.Repositories.Categories;
 using Infrastructure.Repositories.Users;
 using Infrastructure.Security;
 using Infrastructure.Services;
 using Infrastructure.Services.Auth;
+using Infrastructure.Services.Brands;
 using Infrastructure.Services.Categories;
 using Infrastructure.Services.Users;
 using Infrastructure.Validation;
+using MercatusAPI.LayerSpecificHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,12 +39,47 @@ builder.Services.AddScoped<IPasswordHasher, Sha256PasswordHasher>();
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ICacheService, InMemoryCacheService>();
+builder.Services.AddScoped<PhotoConvertingHelper>();
+builder.Services.AddScoped<IGenericBlobStorageManager, GenericBlobStorageManager>();
+builder.Services.AddScoped<IBrandPhotoStorageHelper, BrandPhotoStorageHelper>();
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUserAuthValidator, UserAuthValidator>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo() { Title = "API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter JWT token like this: {your token}, not Bearer ..., but directly the token"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("Jwt"));
