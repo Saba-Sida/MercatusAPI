@@ -2,7 +2,7 @@
 
 namespace Application.Models.RequestModels;
 
-public record AddNewProductRequest(
+public record AddNewProductPartialRequest(
     [Required] string ProductName,
     [Required] string ProductDescription,
     [Required] decimal Price,
