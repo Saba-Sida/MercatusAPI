@@ -41,4 +41,10 @@ public class BrandRepository: IBrandRepository
             .SetProperty(b => b.BrandPhoto, brandPhotoAddress)
         );
     }
+
+    public async Task<bool> BrandByIdExists(int brandId)
+    {
+        return await _dbContext.Brands
+            .AnyAsync(brand => brand.BrandId == brandId);
+    }
 }
