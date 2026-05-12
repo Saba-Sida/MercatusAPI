@@ -23,12 +23,13 @@ public class ProductPhotoStorageHelper : IProductPhotoStorageHelper
     
     public async Task<List<string>> SaveProductPhotos(int productId, List<(byte[], string)> photos)
     {
-        var productSpecificDirectory = $"{_baseProductPhotosStorageAddress}_{productId}";
+        var productPhotosDirectoryName = $"ProductPhotos_{productId}";
+        var productSpecificDirectoryFullPath = Path.Combine(_baseProductPhotosStorageAddress, productPhotosDirectoryName);
         var createdPhotosAddressList = new List<string>();
         foreach (var photo in photos)
         {
             var createdPhotoAddress = await _genericBlobStorageManager
-                .SaveFile(productSpecificDirectory, BuildProductPhotoName(productId, photo.Item2), photo.Item1);
+                .SaveFile(productSpecificDirectoryFullPath, BuildProductPhotoName(productId, photo.Item2), photo.Item1);
             
             if(createdPhotoAddress != null) createdPhotosAddressList.Add(createdPhotoAddress);
         }
