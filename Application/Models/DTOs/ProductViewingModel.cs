@@ -11,5 +11,6 @@ public record ProductViewingModel(
     int CategoryId,
     string CategoryName,
     int BrandId,
-    string BrandName
+    string BrandName,
+    List<string> PhotoAddresses
     );
