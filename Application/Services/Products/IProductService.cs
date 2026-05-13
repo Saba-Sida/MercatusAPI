@@ -8,5 +8,5 @@ public interface IProductService
 {
     Task<OperationResponse> AddNewProduct(AddNewProductCompleteRequest request);
 
-    Task<OperationResponse<ProductViewingModel>> GetPaginatedProducts(GetProductPaginationRequest request);
+    Task<OperationResponse<List<ProductViewingModel>>> GetPaginatedProducts(GetProductPaginationRequest request);
 }

@@ -68,4 +68,12 @@ public class ProductService : IProductService
 
         return productCreatingOperationResponse;
     }
+
+    public async Task<OperationResponse<List<ProductViewingModel>>> GetPaginatedProducts(GetProductPaginationRequest request)
+    {
+        var productsPaginatedOperationResponse = new OperationResponse<List<ProductViewingModel>>();
+        productsPaginatedOperationResponse.Data = await _productRepository.GetListOfProductsPaginated(request.PageNumber, request.PageSize);
+
+        return productsPaginatedOperationResponse;
+    }
 }
