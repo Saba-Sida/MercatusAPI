@@ -14,6 +14,11 @@ public class ImagesController : ControllerBase
         _genericBlobStorageManager = genericBlobStorageManager;
     }
 
+    /// <remarks>
+    /// if we move the storages (and it is going to be a good approach) to some cloud hosted blob storage
+    /// so it will be out of this server, then no longer necessity of this endpoint, for now, to develop the product,
+    /// it will be that way
+    /// </remarks>
     [HttpGet("{*relativePath}")]
     public async Task<IActionResult> GetImage(string relativePath)
     {
