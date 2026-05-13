@@ -58,7 +58,11 @@ public class ProductRepository : IProductRepository
                     product.Category!.CategoryName,
                     product.BrandId,
                     product.Brand!.BrandName,
-                    product.ProductPhotos.Select(photo => photo.PhotoUri).ToList()
+                    product.ProductPhotos.Select(photo => 
+                        // TODO:
+                        // Ultimately, change the hardcoded part of the base path here, not good approach
+                        // For Development process, it's "ok"
+                        $"https://localhost:44369/api/Images/{photo.PhotoUri}").ToList()
                 )
             ).ToListAsync();
     }
