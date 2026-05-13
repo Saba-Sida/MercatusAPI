@@ -6,29 +6,26 @@ namespace Infrastructure.BlobStirage;
 public class BrandPhotoStorageHelper : IBrandPhotoStorageHelper
 {
     private readonly IGenericBlobStorageManager _genericBlobStorageManager;
-    private readonly string _baseBrandPhotosStorageAddress;
-    
+
+    private readonly string _brandPhotoSubDirectoryName;
+
     public BrandPhotoStorageHelper(
         IGenericBlobStorageManager genericBlobStorageManager,
         IConfiguration configuration
     )
     {
         _genericBlobStorageManager = genericBlobStorageManager;
-        var baseUri = configuration["BlobStorage:BaseUri"]!;
-        var brandPhotoSubDirectory = configuration["BlobStorage:BrandPhotoSubDirectory"]!;
-
-        _baseBrandPhotosStorageAddress =
-            Path.Combine(baseUri, brandPhotoSubDirectory); // not ends with slash
+        _brandPhotoSubDirectoryName = configuration["BlobStorage:BrandPhotoSubDirectory"]!;
     }
 
     public async Task<string?> SaveBrandPhoto(byte[] bytes, string extension)
     {
         try
         {
-            var fileName = BuildBrandPhotoName(extension);
+            var fileName = $"BrandPhoto_{Guid.NewGuid()}{NormalizeExtension(extension)}";
 
             return await _genericBlobStorageManager.SaveFile(
-                _baseBrandPhotosStorageAddress,
+                _brandPhotoSubDirectoryName,
                 fileName,
                 bytes
             );
@@ -39,5 +36,6 @@ public class BrandPhotoStorageHelper : IBrandPhotoStorageHelper
         }
     }
 
-    string BuildBrandPhotoName(string extension) => $"BrandPhoto_{Guid.NewGuid()}{extension}";
+    private string NormalizeExtension(string extension)
+        => extension.StartsWith(".") ? extension : "." + extension;
 }

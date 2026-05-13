@@ -1,31 +1,36 @@
 ﻿using Application.BlobStorage;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.BlobStirage;
 
 public class GenericBlobStorageManager : IGenericBlobStorageManager
 {
-    public async Task<string?> SaveFile(string addressToSave, string fullFileName, byte[]? content)
+    private readonly string _rootPath;
+
+    public GenericBlobStorageManager(IConfiguration configuration)
+    {
+        _rootPath = configuration["BlobStorage:BaseUri"]!; // absolute path: C:/MercatusStorage
+    }
+
+    public async Task<string?> SaveFile(string relativeDirectory, string fileName, byte[]? content)
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(addressToSave) ||
-                string.IsNullOrWhiteSpace(fullFileName) ||
-                content == null ||
-                content.Length == 0)
-            {
+            if (string.IsNullOrWhiteSpace(relativeDirectory) ||
+                string.IsNullOrWhiteSpace(fileName) ||
+                content == null || content.Length == 0)
                 return null;
-            }
 
-            if (!Directory.Exists(addressToSave))
-            {
-                Directory.CreateDirectory(addressToSave);
-            }
+            var absoluteDirectory = Path.Combine(_rootPath, relativeDirectory);
 
-            var fullPath = Path.Combine(addressToSave, fullFileName);
+            if (!Directory.Exists(absoluteDirectory))
+                Directory.CreateDirectory(absoluteDirectory);
 
-            await File.WriteAllBytesAsync(fullPath, content);
+            var absoluteFilePath = Path.Combine(absoluteDirectory, fileName);
 
-            return fullPath;
+            await File.WriteAllBytesAsync(absoluteFilePath, content);
+
+            return Path.Combine(relativeDirectory, fileName).Replace("\\", "/");
         }
         catch
         {

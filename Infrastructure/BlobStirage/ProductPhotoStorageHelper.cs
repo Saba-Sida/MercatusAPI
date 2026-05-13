@@ -6,37 +6,40 @@ namespace Infrastructure.BlobStirage;
 public class ProductPhotoStorageHelper : IProductPhotoStorageHelper
 {
     private readonly IGenericBlobStorageManager _genericBlobStorageManager;
-    private readonly string _baseProductPhotosStorageAddress;
-    
+    private readonly string _productPhotosMainSubDirectoryName;
+
     public ProductPhotoStorageHelper(
         IGenericBlobStorageManager genericBlobStorageManager,
-        IConfiguration configuration
-    )
+        IConfiguration configuration)
     {
         _genericBlobStorageManager = genericBlobStorageManager;
-        var baseUri = configuration["BlobStorage:BaseUri"]!;
-        var productPhotosMainSubDirectory = configuration["BlobStorage:ProductPhotosMainSubDirectory"]!;
-
-        _baseProductPhotosStorageAddress =
-            Path.Combine(baseUri, productPhotosMainSubDirectory); // not ends with slash
+        _productPhotosMainSubDirectoryName = configuration["BlobStorage:ProductPhotosMainSubDirectory"]!;
     }
-    
+
     public async Task<List<string>> SaveProductPhotos(int productId, List<(byte[], string)> photos)
     {
-        var productPhotosDirectoryName = $"ProductPhotos_{productId}";
-        var productSpecificDirectoryFullPath = Path.Combine(_baseProductPhotosStorageAddress, productPhotosDirectoryName);
-        var createdPhotosAddressList = new List<string>();
+        var result = new List<string>();
+
+        var productFolder = $"{_productPhotosMainSubDirectoryName}/ProductPhotos_{productId}";
+
         foreach (var photo in photos)
         {
-            var createdPhotoAddress = await _genericBlobStorageManager
-                .SaveFile(productSpecificDirectoryFullPath, BuildProductPhotoName(productId, photo.Item2), photo.Item1);
-            
-            if(createdPhotoAddress != null) createdPhotosAddressList.Add(createdPhotoAddress);
+            var fileName =
+                $"{productId}_{Guid.NewGuid()}{NormalizeExtension(photo.Item2)}";
+
+            var savedPath = await _genericBlobStorageManager.SaveFile(
+                productFolder,
+                fileName,
+                photo.Item1
+            );
+
+            if (savedPath != null)
+                result.Add(savedPath);
         }
 
-        return createdPhotosAddressList;
+        return result;
     }
 
-    private string BuildProductPhotoName(int productId, string extension)
-        => $"{productId}_{Guid.NewGuid()}{extension}";
+    private string NormalizeExtension(string extension)
+        => extension.StartsWith(".") ? extension : "." + extension;
 }

@@ -13,7 +13,7 @@ public interface IGenericBlobStorageManager
     /// <summary>
     /// Saves file to given address
     /// </summary>
-    /// <param name="addressToSave">
+    /// <param name="relativeAddressToSave">
     /// Directory full address, including the directory name in the end
     /// </param>
     /// <param name="fullFileName">Complete file name</param>
@@ -21,5 +21,5 @@ public interface IGenericBlobStorageManager
     /// If such address does not exist, creates.
     /// If such file already exists, overwrites
     /// </remarks>
-    Task<string?> SaveFile(string addressToSave, string fullFileName, byte[]? content);
+    Task<string?> SaveFile(string relativeAddressToSave, string fullFileName, byte[]? content);
 }
