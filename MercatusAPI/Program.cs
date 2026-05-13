@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using Application.BlobStorage;
 using Application.Models.Auth;
@@ -33,6 +34,11 @@ using MercatusAPI.LayerSpecificHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
+var culture = CultureInfo.InvariantCulture;
+
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 var builder = WebApplication.CreateBuilder(args);
 
