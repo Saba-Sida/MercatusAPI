@@ -22,4 +22,6 @@ public interface IGenericBlobStorageManager
     /// If such file already exists, overwrites
     /// </remarks>
     Task<string?> SaveFile(string relativeAddressToSave, string fullFileName, byte[]? content);
+
+    Task<(byte[]? bytes, string? contentType)> LoadImageAsync(string relativePath);
 }

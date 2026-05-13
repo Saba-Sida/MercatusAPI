@@ -37,4 +37,35 @@ public class GenericBlobStorageManager : IGenericBlobStorageManager
             return null;
         }
     }
+
+    public async Task<(byte[]? bytes, string? contentType)> LoadImageAsync(string relativePath)
+    {
+        try
+        {
+            var fullPath = Path.Combine(_rootPath, relativePath);
+
+            if (!File.Exists(fullPath))
+                return (null, null);
+
+            var bytes = await File.ReadAllBytesAsync(fullPath);
+
+            var contentType = GetContentType(fullPath);
+
+            return (bytes, contentType);
+        }
+        catch
+        {
+            return (null, null);
+        }
+    }
+
+    private string GetContentType(string path) =>
+        Path.GetExtension(path).ToLower() switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".webp" => "image/webp",
+            ".gif" => "image/gif",
+            _ => "application/octet-stream"
+        };
 }
